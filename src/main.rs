@@ -4,7 +4,7 @@ use libc::{c_void, size_t};
 extern "C" {
     fn heapalloc(size: size_t) -> *mut c_void; // return wrapped type
     fn heapfree(ptr: *mut c_void);
-    fn rdtsc() -> u64;          // allowed to return Rust's type here
+    fn rdtsc() -> u64; // allowed to return Rust's type here
 }
 
 struct Mem<'a>(&'a mut [u8]);
@@ -29,5 +29,7 @@ impl<'a> Drop for Mem<'a> {
 fn main() {
     let m = Mem::new(16);
     for b in m.0.iter() {
-        print!("{:02x} ", b); } println!();
+        print!("{:02x} ", b);
+    }
+    println!();
 }
