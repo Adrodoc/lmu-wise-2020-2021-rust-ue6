@@ -1,6 +1,6 @@
 use libc::{c_void, size_t};
 
-#[link(name = "clib")]
+#[link(name = "alloc")]
 extern "C" {
     fn heapalloc(size: size_t) -> *mut c_void; // return wrapped type
     fn heapfree(ptr: *mut c_void);
