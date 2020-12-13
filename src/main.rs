@@ -7,6 +7,20 @@ extern "C" {
     fn rdtsc() -> u64; // allowed to return Rust's type here
 }
 
+struct Cycles(u64);
+
+impl Cycles {
+    fn start() -> Cycles {
+        let start = unsafe { rdtsc() };
+        Cycles(start)
+    }
+
+    fn stop(self) -> u64 {
+        let Cycles(start) = self;
+        unsafe { rdtsc() - start }
+    }
+}
+
 struct Mem<'a>(&'a mut [u8]);
 
 impl<'a> Mem<'a> {
