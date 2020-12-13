@@ -1,4 +1,5 @@
 use libc::{c_void, size_t};
+use rand::Rng;
 
 #[link(name = "alloc")]
 extern "C" {
@@ -41,9 +42,31 @@ impl<'a> Drop for Mem<'a> {
 }
 
 fn main() {
-    let m = Mem::new(16);
-    for b in m.0.iter() {
-        print!("{:02x} ", b);
+    let mut blocks: Vec<Mem> = Vec::new(); // store all allocated memory blocks
+    let mut cycles: Vec<u64> = vec![0; 14]; // store accumulated time
+    let mut count: Vec<u64> = vec![0; 14]; // # of blocks of particular size
+    let mut rng = rand::thread_rng();
+    for _ in 0..100_000 {
+        // repeat for reliable measurement
+        let exponent = rng.gen_range(4, 14);
+        let blocksize = 2usize.pow(exponent as u32); // blocksize between 16 bytes and 8K
+        let c = Cycles::start(); // start the clock
+        let block = Mem::new(blocksize); // request allocation
+
+        // now, trick the compiler and actually force allocation by
+        // accessing the memory block and printing its content
+        // however, printing is slow and we actually do not want to do it
+        // (but the compiler cannot know: we compare against a random number)
+        if exponent == 100 {
+            for byte in block.0.iter() {
+                print!("{:02x} ", byte);
+            }
+        }
+        count[exponent] += 1; // record count for block-size
+        cycles[exponent] += c.stop(); // record run-time
+        blocks.push(block); // store block
     }
-    println!();
+    for i in 4..14 {
+        println!("{}: {}", i, cycles[i] / count[i]); // pseudo-code, understood point-wise
+    }
 }
