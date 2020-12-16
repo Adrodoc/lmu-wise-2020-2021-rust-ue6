@@ -67,6 +67,6 @@ fn main() {
         blocks.push(block); // store block
     }
     for i in 4..14 {
-        println!("{}: {}", i, cycles[i] / count[i]); // pseudo-code, understood point-wise
+        println!("{}: {}", i, cycles[i] as f64 / count[i] as f64); // pseudo-code, understood point-wise
     }
 }
