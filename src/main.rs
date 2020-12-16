@@ -42,10 +42,10 @@ impl<'a> Drop for Mem<'a> {
 }
 
 fn main() {
-    let mut blocks: Vec<Mem> = Vec::new(); // store all allocated memory blocks
+    let mut rng = rand::thread_rng();
     let mut cycles: Vec<u64> = vec![0; 14]; // store accumulated time
     let mut count: Vec<u64> = vec![0; 14]; // # of blocks of particular size
-    let mut rng = rand::thread_rng();
+    let mut blocks: Vec<Mem> = Vec::new(); // store all allocated memory blocks
     for _ in 0..100_000 {
         // repeat for reliable measurement
         let exponent = rng.gen_range(4, 14);
@@ -62,8 +62,8 @@ fn main() {
                 print!("{:02x} ", byte);
             }
         }
-        count[exponent] += 1; // record count for block-size
         cycles[exponent] += c.stop(); // record run-time
+        count[exponent] += 1; // record count for block-size
         blocks.push(block); // store block
     }
     for i in 4..14 {
